@@ -1,0 +1,15 @@
+syntax = "proto3";
+service OrderService {
+  /**
+   * Creates an order for the given product with the given quantity.
+   * Returns a successful response if the order could be fulfilled.
+   */
+  rpc CreateOrder(OrderRequest) returns (OrderResponse);
+}
+message OrderRequest {
+  string product = 1;
+  int32 quantity = 2;
+}
+message OrderResponse {
+  string status = 1;
+}
