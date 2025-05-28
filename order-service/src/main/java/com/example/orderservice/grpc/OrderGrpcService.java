@@ -5,12 +5,14 @@ import com.example.orderservice.service.OrderService;
 import com.example.orderservice.grpc.OrderServiceGrpc.OrderServiceImplBase;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @GrpcService
 public class OrderGrpcService extends OrderServiceImplBase {
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
+
+    public OrderGrpcService(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     /**
      * Handles the creation of an order based on the provided request.
