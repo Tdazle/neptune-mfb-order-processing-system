@@ -15,6 +15,13 @@ public class OrderEntityTest {
     @Autowired
     private EntityManager entityManager;
 
+    /**
+     * Tests that an Order entity with valid fields is persisted correctly.
+     * <p>
+     * Creates an Order object with specific product, quantity, and status fields,
+     * persists it using the entity manager, and then retrieves it to verify
+     * that it has been saved with the correct details.
+     */
     @Test
     @Transactional
     @Rollback
@@ -34,6 +41,12 @@ public class OrderEntityTest {
         Assertions.assertEquals("NEW", found.getStatus());
     }
 
+    /**
+     * Tests that the getters of the Order entity return the correct values.
+     * <p>
+     * Creates an Order object, sets its product, quantity, and status fields,
+     * and verifies that the getters return the expected values.
+     */
     @Test
     public void testOrderEntityGettersReturnCorrectValues() {
         Order order = new Order();
@@ -46,6 +59,13 @@ public class OrderEntityTest {
         Assertions.assertEquals("SHIPPED", order.getStatus());
     }
 
+    /**
+     * Tests that the Order entity automatically generates a unique ID upon persistence.
+     * <p>
+     * Persists two Order objects with different product, quantity, and status fields,
+     * verifies that each order is assigned a non-null ID, and checks that the IDs are
+     * unique between the two orders.
+     */
     @Test
     @Transactional
     @Rollback
@@ -72,6 +92,13 @@ public class OrderEntityTest {
         Assertions.assertNotEquals(order1.getId(), order2.getId());
     }
 
+    /**
+     * Tests that the Order entity persists with a quantity of zero.
+     * <p>
+     * Creates an Order object with a product, quantity of zero, and status fields,
+     * persists the order, and verifies that the order is found with the correct
+     * quantity of zero.
+     */
     @Test
     @Transactional
     @Rollback
