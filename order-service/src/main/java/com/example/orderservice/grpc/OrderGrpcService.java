@@ -3,6 +3,7 @@ package com.example.orderservice.grpc;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.service.OrderService;
 import com.example.orderservice.grpc.OrderServiceGrpc.OrderServiceImplBase;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 
@@ -28,13 +29,17 @@ public class OrderGrpcService extends OrderServiceImplBase {
         Order order = new Order();
         order.setProduct(request.getProduct());
         order.setQuantity(request.getQuantity());
-        Order savedOrder = orderService.createOrder(order);
-
-        OrderResponse response = OrderResponse.newBuilder()
-                .setStatus(savedOrder.getStatus())
-                .build();
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        try {
+            Order savedOrder = orderService.createOrder(order);
+            OrderResponse response = OrderResponse.newBuilder()
+                    .setStatus(savedOrder.getStatus())
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (RuntimeException e) {
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription(e.getMessage())
+                    .asRuntimeException());
+        }
     }
 }
