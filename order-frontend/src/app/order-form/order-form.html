@@ -1,0 +1,29 @@
+<form [formGroup]="orderForm" (ngSubmit)="submitOrder()" class="mb-4">
+  <div class="mb-3">
+    <label for="product" class="form-label">Product</label>
+    <select id="product" class="form-select" formControlName="product" required>
+      <option value="" disabled>Select a product</option>
+      @for (product of products; track product.id) {
+        <option [value]="product.name">
+          {{ product.name }} (Stock: {{ product.stockQuantity }})
+        </option>
+      }
+    </select>
+    @if (orderForm.get('product')?.invalid && orderForm.get('product')?.touched) {
+      <div class="text-danger">Product is required.</div>
+    }
+  </div>
+  <div class="mb-3">
+    <label for="quantity" class="form-label">Quantity</label>
+    <input id="quantity" type="number" class="form-control" formControlName="quantity" min="1" required>
+    @if (orderForm.get('quantity')?.invalid && orderForm.get('quantity')?.touched) {
+      <div class="text-danger">Quantity must be at least 1.</div>
+    }
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="orderForm.invalid || loading">
+    {{ loading ? 'Submitting...' : 'Save Order' }}
+  </button>
+  @if (error) {
+    <div class="alert alert-danger mt-2">{{ error }}</div>
+  }
+</form>
