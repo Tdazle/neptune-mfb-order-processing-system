@@ -11,6 +11,9 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Arrays;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -157,5 +160,119 @@ class OrderServiceTest {
         assertEquals("Invalid order details", ex.getMessage());
         verify(orderRepository).save(orderCaptor.capture());
         assertEquals("REJECTED", orderCaptor.getValue().getStatus());
+    }
+
+    /**
+     * Tests that getAllOrders returns an empty list when there are no orders.
+     * <p>
+     * Verifies that the order repository is called to find all orders, and
+     * that an empty list is returned.
+     */
+    @Test
+    void testGetAllOrders_ReturnsEmptyListWhenNoOrders() {
+        when(orderRepository.findAll()).thenReturn(Collections.emptyList());
+        List<Order> result = orderService.getAllOrders();
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Tests that getAllOrders returns a list containing a single order.
+     * <p>
+     * Verifies that the order repository is called to find all orders, and
+     * that a list containing a single order is returned.
+     */
+    @Test
+    void testGetAllOrders_ReturnsSingleOrder() {
+        Order order = new Order();
+        order.setId(1L);
+        order.setProduct("Widget");
+        order.setQuantity(2);
+        order.setStatus("CREATED");
+        when(orderRepository.findAll()).thenReturn(Collections.singletonList(order));
+        List<Order> result = orderService.getAllOrders();
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(order, result.get(0));
+    }
+
+    /**
+     * Tests that getAllOrders returns a list containing multiple orders.
+     * <p>
+     * Verifies that the order repository is called to find all orders, and
+     * that a list containing multiple orders is returned.
+     */
+    @Test
+    void testGetAllOrders_ReturnsMultipleOrders() {
+        Order order1 = new Order();
+        order1.setId(1L);
+        order1.setProduct("Widget");
+        order1.setQuantity(2);
+        order1.setStatus("CREATED");
+
+        Order order2 = new Order();
+        order2.setId(2L);
+        order2.setProduct("Gadget");
+        order2.setQuantity(5);
+        order2.setStatus("REJECTED");
+
+        when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
+        List<Order> result = orderService.getAllOrders();
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(order1));
+        assertTrue(result.contains(order2));
+    }
+
+    /**
+     * Tests that getAllOrders handles null from the repository.
+     * <p>
+     * Verifies that when the repository returns null, getAllOrders returns null.
+     */
+    @Test
+    void testGetAllOrders_HandlesNullFromRepository() {
+        when(orderRepository.findAll()).thenReturn(null);
+        List<Order> result = orderService.getAllOrders();
+        assertNull(result);
+    }
+
+    /**
+     * Tests that getAllOrders rethrows any exceptions from the repository.
+     * <p>
+     * Verifies that when the repository throws an exception, getAllOrders
+     * rethrows the same exception.
+     */
+    @Test
+    void testGetAllOrders_ThrowsWhenRepositoryFails() {
+        when(orderRepository.findAll()).thenThrow(new RuntimeException("Database failure"));
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> orderService.getAllOrders());
+        assertEquals("Database failure", ex.getMessage());
+    }
+
+    /**
+     * Tests that getAllOrders correctly handles orders with null fields.
+     * <p>
+     * Mocks the order repository to return a list containing a single order
+     * with null fields for id, product, and status, and a quantity of zero.
+     * Invokes the order service to retrieve all orders and verifies that the
+     * returned list contains the order with the expected null and zero values.
+     */
+    @Test
+    void testGetAllOrders_HandlesOrdersWithNullFields() {
+        Order orderWithNulls = new Order();
+        orderWithNulls.setId(null);
+        orderWithNulls.setProduct(null);
+        orderWithNulls.setQuantity(0);
+        orderWithNulls.setStatus(null);
+
+        when(orderRepository.findAll()).thenReturn(Collections.singletonList(orderWithNulls));
+        List<Order> result = orderService.getAllOrders();
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        Order returnedOrder = result.get(0);
+        assertNull(returnedOrder.getId());
+        assertNull(returnedOrder.getProduct());
+        assertEquals(0, returnedOrder.getQuantity());
+        assertNull(returnedOrder.getStatus());
     }
 }

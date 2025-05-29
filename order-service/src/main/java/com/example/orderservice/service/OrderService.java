@@ -9,6 +9,8 @@ import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
@@ -69,5 +71,14 @@ public class OrderService {
             orderRepository.save(order);
             throw new RuntimeException("gRPC error: " + e.getStatus().getDescription());
         }
+    }
+
+    /**
+     * Retrieves all orders from the database.
+     *
+     * @return list of all orders
+     */
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
     }
 }
