@@ -16,16 +16,6 @@ class InventoryGrpcServiceTest {
     private InventoryGrpcService inventoryGrpcService;
     private StreamObserver<StockResponse> responseObserver;
 
-    /**
-     * Sets up the test fixture before each test method is run.
-     * <p>
-     * Creates a mock instance of the {@link InventoryService} and a mock
-     * {@link StreamObserver} for the response.
-     * Also creates a new
-     * instance of the {@link InventoryGrpcService} using the mock
-     * inventory service.
-     */
-    @SuppressWarnings("unchecked")
     @BeforeEach
     void setUp() {
         inventoryService = mock(InventoryService.class);
@@ -70,7 +60,7 @@ class InventoryGrpcServiceTest {
     /**
      * Test that a call to updateStock with a request quantity of 3
      * for a product with a stock quantity of 7 results in a response
-     * with available = true, stockQuantity = 7, and a message = "Stock updated successfully".
+     * with available = true, stockQuantity = 7, and message = "Stock updated successfully".
      */
     @Test
     void testUpdateStock_SufficientStock_UpdatesSuccessfully() {
@@ -104,7 +94,7 @@ class InventoryGrpcServiceTest {
     /**
      * Test that a call to updateStock with a request quantity of 2
      * for a product with a stock quantity of 8 results in a response
-     * with available = true, stockQuantity = 8, and a message = "Stock updated successfully".
+     * with available = true, stockQuantity = 8, and message = "Stock updated successfully".
      * This test is like {@link #testUpdateStock_SufficientStock_UpdatesSuccessfully()}, but
      * with a different quantity.
      */
@@ -140,7 +130,7 @@ class InventoryGrpcServiceTest {
     /**
      * Test that a call to checkStock with a request quantity of 1
      * for a non-existent product results in a response
-     * with available = false, stockQuantity = 0, and a message = "Insufficient stock".
+     * with available = false, stockQuantity = 0, and message = "Insufficient stock".
      */
     @Test
     void testCheckStock_NonExistentProduct_ReturnsUnavailable() {
@@ -204,17 +194,18 @@ class InventoryGrpcServiceTest {
 
     /**
      * Test that a call to checkStock or updateStock with a null or empty product name is handled
-     * gracefully and results in a response with available = false, stockQuantity = 0, and a message =
+     * gracefully and results in a response with available = false, stockQuantity = 0, and message =
      * "Insufficient stock" or "Failed to update stock".
      */
     @Test
     void testCheckAndUpdateStock_NullOrEmptyProductName_HandledGracefully() {
         // Test with null product name
+        String nullProductName = null;
         int requestQty = 5;
 
-        when(inventoryService.checkStock(null, requestQty)).thenReturn(false);
-        when(inventoryService.getProductByName(null)).thenReturn(null);
-        when(inventoryService.updateStock(null, requestQty)).thenReturn(false);
+        when(inventoryService.checkStock(nullProductName, requestQty)).thenReturn(false);
+        when(inventoryService.getProductByName(nullProductName)).thenReturn(null);
+        when(inventoryService.updateStock(nullProductName, requestQty)).thenReturn(false);
 
         StockRequest checkRequestNull = StockRequest.newBuilder()
                 .setProduct("")

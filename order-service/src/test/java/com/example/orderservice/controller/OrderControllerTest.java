@@ -276,8 +276,9 @@ class OrderControllerTest {
     void testGetAllOrders_ServiceThrowsException() {
         when(orderService.getAllOrders()).thenThrow(new RuntimeException("Unexpected error"));
 
+        ResponseEntity<List<Order>> response;
         try {
-            orderController.getAllOrders();
+            response = orderController.getAllOrders();
             // If no exception is thrown, fail the test
             fail("Expected exception was not thrown");
         } catch (Exception ex) {
