@@ -63,7 +63,7 @@ class InventoryControllerTest {
 
         ResponseEntity<List<Product>> response = inventoryController.getAllProducts();
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).containsExactlyElementsOf(products);
     }
 
@@ -78,7 +78,7 @@ class InventoryControllerTest {
 
         ResponseEntity<List<Product>> response = inventoryController.getAllProducts();
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isEmpty();
     }
 
@@ -92,7 +92,7 @@ class InventoryControllerTest {
 
         ResponseEntity<List<Product>> response = inventoryController.getAllProducts();
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
     }
 
     /**
